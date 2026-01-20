@@ -2,152 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>The Large-Format Lexicon</title>
+    <title>The Open Dictionary</title>
     <style>
-        :root { --paper: #fdfaf3; --ink: #1a1a1a; --accent: #112e51; --spine: #1a0f0a; }
+        :root { --paper: #fdfaf3; --ink: #1a1a1a; --accent: #112e51; --spine: #1a0f0a; --highlight: rgba(212, 175, 55, 0.3); }
         
-        body { 
-            background-color: #050505; 
-            display: flex; 
-            font-family: "Georgia", serif; 
-            margin: 0; 
-            height: 100vh; 
-            width: 100vw;
-            overflow: hidden; 
-            color: var(--ink); 
-        }
+        body { background-color: #050505; display: flex; font-family: "Georgia", serif; margin: 0; height: 100vh; width: 100vw; overflow: hidden; color: var(--ink); }
 
-        /* Sidebar remains compact */
-        .sidebar { 
-            width: 60px; 
-            background: #000; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding-top: 15px; 
-            border-right: 1px solid #222; 
-            overflow-y: auto; 
-        }
+        /* Sidebar */
+        .sidebar { width: 60px; background: #000; display: flex; flex-direction: column; align-items: center; padding-top: 15px; border-right: 1px solid #222; overflow-y: auto; }
         .letter-nav { color: #555; font-size: 1.1rem; margin: 5px 0; cursor: pointer; transition: 0.2s; }
         .letter-nav.active { color: #0084ff; font-weight: bold; transform: scale(1.2); }
 
-        .main-stage { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 10px; 
-            justify-content: center; 
-        }
+        .main-stage { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; justify-content: center; }
 
-        /* Standard Sized Search Area */
-        .search-area { 
-            width: 500px; 
-            display: flex; 
-            gap: 10px; 
-            margin-bottom: 15px; 
-        }
-        #searchBox { 
-            flex: 1; 
-            padding: 12px 20px; 
-            border-radius: 25px; 
-            border: 1px solid #333; 
-            font-size: 1rem; 
-            outline: none; 
-            background: #111; 
-            color: #eee; 
-        }
+        /* Search Area */
+        .search-area { width: 500px; display: flex; gap: 10px; margin-bottom: 15px; }
+        #searchBox { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #333; font-size: 1rem; outline: none; background: #111; color: #eee; }
 
         /* THE MASSIVE BOOK */
-        .book { 
-            width: 96%; 
-            height: 88vh; 
-            max-width: 1800px;
-            background: var(--paper); 
-            display: flex; 
-            box-shadow: 0 40px 80px rgba(0,0,0,0.8); 
-            position: relative; 
-            border: 12px solid var(--spine); 
-            border-radius: 4px; 
-        }
-
-        /* Gutter shadow */
-        .book::before { 
-            content: ""; 
-            position: absolute; 
-            left: 50%; 
-            width: 50px; 
-            height: 100%; 
-            background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.15), rgba(0,0,0,0)); 
-            transform: translateX(-50%); 
-            z-index: 10; 
-            pointer-events: none;
-        }
+        .book { width: 96%; height: 88vh; max-width: 1800px; background: var(--paper); display: flex; box-shadow: 0 40px 80px rgba(0,0,0,0.8); position: relative; border: 12px solid var(--spine); border-radius: 4px; }
+        .book::before { content: ""; position: absolute; left: 50%; width: 50px; height: 100%; background: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.15), rgba(0,0,0,0)); transform: translateX(-50%); z-index: 10; pointer-events: none; }
         
-        .page { 
-            flex: 1; 
-            padding: 60px 40px 30px 40px; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            grid-template-rows: repeat(5, 1fr); /* 5 rows x 2 columns = 10 words */
-            gap: 20px; 
-            overflow: hidden; 
-            position: relative; 
-        }
+        .page { flex: 1; padding: 60px 40px 30px 40px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, 1fr); gap: 20px; overflow: hidden; position: relative; }
+        .guide-words { position: absolute; top: 20px; width: 90%; left: 5%; display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
 
-        .guide-words { 
-            position: absolute; 
-            top: 20px; 
-            width: 90%; 
-            left: 5%; 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.9rem; 
-            font-weight: bold; 
-            color: var(--accent); 
-            text-transform: uppercase; 
-            border-bottom: 1px solid #ddd; 
-            padding-bottom: 5px; 
-        }
-
-        /* Entry Boxes scaled for 10 per page */
-        .entry { 
-            font-size: 0.95rem; 
-            line-height: 1.4; 
-            border-left: 2px solid #eee; 
-            padding-left: 12px; 
-            height: 100%; 
-            overflow-y: auto; 
-            scrollbar-width: thin; 
-        }
-        .word { 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            color: var(--accent); 
-            display: block; 
-            font-size: 1.15rem; 
-            margin-bottom: 4px; 
-            position: sticky; 
-            top: 0; 
-            background: var(--paper); 
-        }
+        /* Entry Styling with Highlight Support */
+        .entry { font-size: 0.95rem; line-height: 1.4; border-left: 2px solid #eee; padding-left: 12px; height: 100%; overflow-y: auto; scrollbar-width: thin; transition: background 0.5s; }
+        .entry.highlighted { background-color: var(--highlight); border-left: 4px solid #d4af37; border-radius: 0 4px 4px 0; }
         
-        .meaning-item { margin-bottom: 5px; display: block; font-style: normal; color: #333; }
+        .word { font-weight: bold; text-transform: uppercase; color: var(--accent); display: block; font-size: 1.15rem; margin-bottom: 4px; position: sticky; top: 0; background: inherit; z-index: 5; }
+        .meaning-item { margin-bottom: 5px; display: block; color: #333; }
         .meaning-num { font-weight: bold; color: #a18b4a; margin-right: 5px; }
 
-        .nav-btn { 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            width: 60px; 
-            height: 60px; 
-            cursor: pointer; 
-            border-radius: 50%; 
-            font-size: 2rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        }
+        .nav-btn { background: var(--accent); color: white; border: none; width: 60px; height: 60px; cursor: pointer; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; }
         .nav-btn:disabled { opacity: 0.05; }
         #status-label { color: #555; margin-top: 10px; font-family: monospace; font-size: 0.75rem; }
     </style>
@@ -157,7 +44,7 @@
     <div class="sidebar" id="sidebar"></div>
     <div class="main-stage">
         <div class="search-area">
-            <input type="text" id="searchBox" placeholder="Type word + Enter" autocomplete="off">
+            <input type="text" id="searchBox" placeholder="Search a word..." autocomplete="off">
             <button onclick="handleSearch()" style="background:var(--accent); color:white; border:none; padding:0 20px; border-radius:20px; cursor:pointer; font-weight:bold;">FIND</button>
         </div>
 
@@ -176,11 +63,10 @@
         let currentLetter = 'A';
         let wordCache = [];
         let pageIdx = 0;
-        const wordsPerPage = 20; // 10 per page x 2 pages
+        let highlightedWord = null;
+        const wordsPerPage = 20; 
 
-        document.getElementById('searchBox').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSearch();
-        });
+        document.getElementById('searchBox').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
 
         const side = document.getElementById('sidebar');
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(l => {
@@ -188,12 +74,12 @@
             div.innerText = l;
             div.className = 'letter-nav';
             div.id = 'nav-' + l;
-            div.onclick = () => { currentLetter = l; pageIdx = 0; fetchStrictAlphabetical(l); };
+            div.onclick = () => { currentLetter = l; pageIdx = 0; highlightedWord = null; fetchStrictAlphabetical(l); };
             side.appendChild(div);
         });
 
-        async function fetchStrictAlphabetical(letter) {
-            setStatus(`UPDATING: SECTION ${letter}`);
+        async function fetchStrictAlphabetical(letter, jumpTo = null) {
+            setStatus(`UPDATING SECTION ${letter}`);
             const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
             try {
                 const promises = alphabet.map(secondChar => 
@@ -201,12 +87,18 @@
                     .then(r => r.json())
                 );
                 const results = await Promise.all(promises);
-                let rawWords = results.flat().map(i => ({
-                    w: i.word,
-                    backup: i.defs || []
-                })).filter(e => e.w.length > 1);
+                let rawWords = results.flat().map(i => ({ w: i.word, backup: i.defs || [] })).filter(e => e.w.length > 1);
                 
                 wordCache = rawWords.sort((a, b) => a.w.localeCompare(b.w, 'en'));
+
+                if (jumpTo) {
+                    const idx = wordCache.findIndex(e => e.w === jumpTo);
+                    if (idx !== -1) {
+                        pageIdx = Math.floor(idx / wordsPerPage);
+                        highlightedWord = jumpTo;
+                    }
+                }
+
                 await render();
                 setStatus("LOADED");
             } catch (e) { setStatus("OFFLINE"); }
@@ -219,10 +111,6 @@
             const rp = document.getElementById('rightPage');
             
             if (slice.length === 0) { lp.innerHTML = "Indexing..."; rp.innerHTML = ""; return; }
-
-            // Guide words for left and right pages
-            const leftSlice = slice.slice(0, 10);
-            const rightSlice = slice.slice(10, 20);
 
             const entries = await Promise.all(slice.map(async (entry) => {
                 try {
@@ -241,8 +129,12 @@
                 const head = `<div class="guide-words"><span>${pageSlice[0].w}</span><span>${pageSlice[pageSlice.length-1].w}</span></div>`;
                 let content = head;
                 pageSlice.forEach(en => {
+                    const isMatch = en.w === highlightedWord;
                     let meanings = en.m.map((t, idx) => `<span class="meaning-item"><span class="meaning-num">${idx + 1}.</span>${t.split('\t').pop()}</span>`).join('');
-                    content += `<div class="entry"><span class="word">${en.w}</span>${meanings}</div>`;
+                    content += `<div class="entry ${isMatch ? 'highlighted' : ''}" id="word-${en.w}">
+                                    <span class="word">${en.w}</span>
+                                    ${meanings}
+                                </div>`;
                 });
                 container.innerHTML = content;
             };
@@ -250,27 +142,11 @@
             renderPage(lp, entries.slice(0, 10));
             renderPage(rp, entries.slice(10, 20));
 
+            // UI Refresh
             document.querySelectorAll('.letter-nav').forEach(n => n.classList.remove('active'));
             document.getElementById('nav-' + currentLetter).classList.add('active');
             document.getElementById('prevBtn').disabled = (pageIdx === 0);
             document.getElementById('nextBtn').disabled = (pageIdx + 1) * wordsPerPage >= wordCache.length;
-        }
 
-        function changePage(dir) { pageIdx += dir; render(); }
-
-        async function handleSearch() {
-            const val = document.getElementById('searchBox').value.trim().toLowerCase();
-            if (val) {
-                currentLetter = val[0].toUpperCase();
-                await fetchStrictAlphabetical(currentLetter);
-                const idx = wordCache.findIndex(e => e.w === val);
-                if (idx !== -1) pageIdx = Math.floor(idx / wordsPerPage);
-                render();
-            }
-        }
-
-        function setStatus(msg) { document.getElementById('status-label').innerText = msg; }
-        fetchStrictAlphabetical('A');
-    </script>
-</body>
-</html>
+            // Scroll highlighted word into view if it exists on this page
+            if (highlightedWord) {
