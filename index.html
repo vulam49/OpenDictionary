@@ -150,3 +150,23 @@
 
             // Scroll highlighted word into view if it exists on this page
             if (highlightedWord) {
+                const targetEl = document.getElementById(`word-${highlightedWord}`);
+                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function changePage(dir) { highlightedWord = null; pageIdx += dir; render(); }
+
+        async function handleSearch() {
+            const val = document.getElementById('searchBox').value.trim().toLowerCase();
+            if (val) {
+                currentLetter = val[0].toUpperCase();
+                await fetchStrictAlphabetical(currentLetter, val);
+            }
+        }
+
+        function setStatus(msg) { document.getElementById('status-label').innerText = msg; }
+        fetchStrictAlphabetical('A');
+    </script>
+</body>
+</html>
